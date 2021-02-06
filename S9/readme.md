@@ -1,7 +1,7 @@
 
 Resnet 18 trained on CIFAR 10 Data set 
 
-Transformation : Albementations
+Transformation : (using Albementations package)
 
 Data augmentation (DA) is an effective alternative to obtaining valid data, and can generate new labeled data based on existing data using "label-preserving transformations". 
 
@@ -20,6 +20,8 @@ Batch Normalization
 L1/L2 regularization 
 Layer normalization 
 have been proposed to help combat over-fitting, but they will fall short if data is limited
+
+CUT OUT is a great agumentation technique , that implements what dropout does but with more effectiveness. FORCES Network to learn all possible features from a CLASS.
 
 
 
