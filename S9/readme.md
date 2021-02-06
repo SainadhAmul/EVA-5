@@ -41,5 +41,5 @@ Normalize the heat map to make the values between 0 and 1
 
 
 ![plot](./test/dog/dog1.png)
-![plot](./Gradcam_out/map.png)
+![plot](./Gradcam_out/map.jpg)
 
