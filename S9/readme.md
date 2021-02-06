@@ -25,7 +25,6 @@ have been proposed to help combat over-fitting, but they will fall short if data
 
 DIAGNOSING DNN
 
-
 Grad CAM:
 
 Steps: 
@@ -42,5 +41,5 @@ Normalize the heat map to make the values between 0 and 1
 
 
 ![plot](./test/dog/dog1.png)
-
+![plot](./Gradcam_out/map.png)
 
