@@ -58,16 +58,6 @@ However, results show, that it is often SLIGHTLY good to set stepsize  equal to 
 
 
 
-## Interpreting the plot
-
-### Learning Rate
-
-
-
-
-
-
-
 ## Training with `OneCycleLR`
 Once we find the maximum learning rate, we can then move onto using the `OneCycleLR` callback with SGD to train our model.
 
