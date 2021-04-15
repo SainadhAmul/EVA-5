@@ -80,7 +80,7 @@ Once we find the maximum learning rate, we can then move onto using the `OneCycl
         train(model,train_loader, criterion, optimizer, device,l1_factor =l1_factor, **train_trackers)
         scheduler.step()
         test(model, test_loader, criterion, device, incorrect_samples, **test_trackers)
-    ```
+```
 
 There are many parameters, but a few of the important ones : 
 
@@ -101,9 +101,20 @@ learning_rate, epochs, steps_per_epoch, pct_start
 Note also that the total number of steps in the cycle can be determined in one of two ways (listed in order of precedence):
 
 A value for total_steps is explicitly provided.
-
 A number of epochs (epochs) and a number of steps per epoch (steps_per_epoch) are provided. In this case, the number of total steps is inferred by total_steps = epochs * steps_per_epoch
-
 You must either provide a value for total_steps or provide a value for both epochs and steps_per_epoch.
 
 # Results
+
+Quicker jumps in accuracy are evident due to onecycle lr implementation
+
+Accuracy: 
+![acc](https://user-images.githubusercontent.com/45446030/114860820-1854bc00-9e0a-11eb-8e0f-1f19a12f350f.png)
+
+Loss:
+![loss](https://user-images.githubusercontent.com/45446030/114860832-1ab71600-9e0a-11eb-8494-1ffbb8d0e596.png)
+
+
+
+
+
