@@ -1,1 +1,40 @@
 
+
+# LR
+While training a Deep Neural Network selecting a good learning rate is essential for both fast convergence and a lower error. We also have to select 
+a optimiser which decides how weight updates are done in a DNN.
+There are various optimisers available like Adam, SGD+momentum, Adagrad, RMSprop, AdaDelta, AdaBound. Of these Adam and SGD+momentum are most popular.
+While training a Fully Connected DNN or a Convolutional network most State of the Art networks use SGD+momentum. This is due to the fact that it generalises better to unseen data and gives better validation/test scores.
+
+
+
+# LR Finder 
+
+Basic objective of a LR Finder is to find the highest LR which still minimises the loss and does not make the loss explode/diverge. 
+We do this by training a model while increasing the LR after each batch, we record the loss and finally we use the LR just before loss exploded. We do this for 1 epoch.
+
+
+Before LR Finder
+We used SGD directly with a learning_rate of 0.01 and nesterov’s momentum. We trained the network on CIFAR-10 for 100 epochs. Our network has 450K params.
+
+
+
+Without LR Finder
+As you can notice it took about 60 epochs for validation error to converge and it is 86.7% accuracy.
+After LR Finder
+We use the LR provided by LR finder. Everything else is same.
+
+<img src="https://miro.medium.com/max/875/1*-QfrISeP7CWOhbDq_YwQGw.png" height=50% width=100%>
+
+After LR Finder
+You can see that here we get 86.4% accuracy but training converges in 40 epochs instead of 60. Using LR given by LR finder along with EarlyStopping can reduce compute time massively.
+After LR Finder with LR scheduling
+We use LR scheduling from keras to decrease LR in each epoch. Basically after each epoch we decrease LR by multiplying with 0.97. You can see the section LR Scheduling in the example notebook
+
+<img src="https://miro.medium.com/max/875/1*MkjQ2yUjtjxEGkdRu9uwGQ.png" height=50% width=100%>
+
+
+
+With LR scheduling
+Notice that we get 88.4% with same network and LR. Also notice that towards the end the loss and accuracy graphs are no longer fluctuating as before.
+So we have gotten over 1% accuracy increase just by using LR finder with LR scheduling using the same 100 epochs we started with.
