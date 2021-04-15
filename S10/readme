@@ -13,6 +13,22 @@ While training a Fully Connected DNN or a Convolutional network most State of th
 Basic objective of a LR Finder is to find the highest LR which still minimises the loss and does not make the loss explode/diverge. 
 We do this by training a model while increasing the LR after each batch, we record the loss and finally we use the LR just before loss exploded. We do this for 1 epoch.
 
+# Implementation (CODE)
+
+REDUCE LR ON PLATUE
+```    
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, weight_decay=l2_factor)
+    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min')
+
+    ## Model RUN!
+    for epoch in range(1, epochs + 1):
+        print(f'\nEpoch {epoch}:')
+        train(model,train_loader, criterion, optimizer, device,l1_factor =l1_factor, **train_trackers)
+        test(model, test_loader, criterion, device, incorrect_samples, **test_trackers)
+        scheduler.step(test_trackers['test_losses'][-1])
+```
+
+
 
 Before LR Finder
 We used SGD directly with a learning_rate of 0.01 and nesterov’s momentum. We trained the network on CIFAR-10 for 100 epochs. Our network has 450K params.
