@@ -14,6 +14,7 @@ YOLO v3
 ARCHITECTURE PLAN:
 
 ![alt text](https://github.com/SainadhAmul/EVA-5/blob/main/Capstone%20S15/Architecture%20diagrams/Arch%20Thanos%20Net%20(1).png)
+![Custom](EVA-5/Capstone S15/Architecture diagrams/Arch Thanos Net (1).png)
 
 
 Approach:
@@ -32,7 +33,7 @@ This is a pretrained Monocular depth estimatation network
 MIDAS ARCHITECTURE:
 
 ![alt text](https://github.com/SainadhAmul/EVA-5/blob/main/Capstone%20S15/Architecture%20diagrams/midas.jpeg)
-
+![YOLO](EVA-5/Capstone S15/Architecture diagrams/midas.jpeg)
 
 As Midas alraedy has good pretrained backbone. The repo provides 2 options
 
@@ -55,5 +56,5 @@ Object localization network
 YOLO Architecture:
 
 ![alt text](https://github.com/SainadhAmul/EVA-5/blob/main/Capstone%20S15/Architecture%20diagrams/YOLO%20v3.jpeg)
-
+![YOLO](EVA-5/Capstone S15/Architecture diagrams/YOLO v3.jpeg)
 
