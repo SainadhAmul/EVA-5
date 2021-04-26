@@ -11,11 +11,28 @@ Plane/planar surfaces Detection - PlanarRCNN
 1 obj localization pred:
 YOLO v3
 
+ARCHITECTURE PLAN:
+
+![alt text](https://github.com/SainadhAmul/EVA-5/blob/main/Capstone%20S15/Architecture%20diagrams/Arch%20Thanos%20Net%20(1).png)
+
+
 Approach:
 
 First ITERATION:
 
 MIDAS + YOLO:
+
+
+
+
+MIDAS UNDERSTANDING:
+
+This is a pretrained Monocular depth estimatation network
+
+MIDAS ARCHITECTURE:
+
+![alt text](https://github.com/SainadhAmul/EVA-5/blob/main/Capstone%20S15/Architecture%20diagrams/midas.jpeg)
+
 
 As Midas alraedy has good pretrained backbone. The repo provides 2 options
 
@@ -29,5 +46,14 @@ back_bone =  efficient lite 3 EfficientNet B0 4.9M params
 
 
 
+
+YOLO understanding:
+
+Object localization network
+
+
+YOLO Architecture:
+
+![alt text](https://github.com/SainadhAmul/EVA-5/blob/main/Capstone%20S15/Architecture%20diagrams/YOLO%20v3.jpeg)
 
 
