@@ -21,6 +21,11 @@
 
 The common thing in these networks is they all use a Head/Backbone(feature extractor) that usually is RESNET! so we can use this to connect all three network to same-head. We can lock the params in the head/backbone network and the train 3 branches from the head.
 
+The 3 different backbones  in each of the networks:
+- MidasNet - ResNext101_32x8d_wsl
+- Planercnn - ResNet101
+- Yolov3 - Darknet-53
+
 - First try to combine midas and yolo.
 
 #### First ITERATION:
