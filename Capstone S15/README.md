@@ -4,23 +4,36 @@
 ## Problem Statement:
 ### Given input imag:
 
-#### generate 2 dense predictions
+#### Generate 2 dense predictions:
 - Depth Estimation - MiDaS
 - Plane/planar surfaces Detection - PlanarRCNN
 
-#### 1 obj localization pred:
+#### 1 object localisation:
 - YOLO v3
 
 ### ARCHITECTURE PLAN:
 
 ![Custom](https://github.com/SainadhAmul/EVA-5/blob/main/Capstone%20S15/Architecture%20diagrams/Arch%20Thanos%20Net%20(1).png)
-![Custom](EVA-5/Capstone S15/Architecture diagrams/Arch Thanos Net (1).png)
+
 
 
 ### Approach:
 
-First ITERATION:
-MIDAS + YOLO:
+The common thing in these networks is they all use a Head/Backbone(feature extractor) that usually is RESNET! so we can use this to connect all three network to same-head. We can lock the params in the head/backbone network and the train 3 branches from the head.
+
+The 3 different backbones  in each of the networks:
+- MidasNet - ResNext101_32x8d_wsl
+- Planercnn - ResNet101
+- Yolov3 - Darknet-53
+
+- First try to combine midas and yolo.
+
+#### First ITERATION:
+- MIDAS + YOLO:
+
+![YOLO+MIDAS](https://github.com/SainadhAmul/EVA-5/blob/main/Capstone%20S15/Architecture%20diagrams/Yolo_MIDAS_ARC.png)
+
+
 
 
 
@@ -32,17 +45,19 @@ This is a pretrained Monocular depth estimatation network
 ### MIDAS ARCHITECTURE:
 
 ![midas](https://github.com/SainadhAmul/EVA-5/blob/main/Capstone%20S15/Architecture%20diagrams/midas.jpeg)
-![midas](EVA-5/Capstone S15/Architecture diagrams/midas.jpeg)
+
 
 As Midas alraedy has good pretrained backbone. The repo provides 2 options
 
 ### MIDAS BACKBONE
 
-model-1: weights model-f6b98070.pt 
-back_bone = resnet101 44.5 m paramas
+#### Large model
+- model1: weights model-f6b98070.pt 
+- back_bone = resnet101 44.5 m paramas
 
-model2 : model-small-70d6b9c8.pt 
-back_bone =  efficient lite 3 EfficientNet B0 4.9M params
+#### Small model
+- model2 : model-small-70d6b9c8.pt 
+- ient lite 3 EfficientNet B0 4.9M params
 
 
 
@@ -55,7 +70,7 @@ Object localization network
 ### YOLO Architecture:
 
 ![YOLO](https://github.com/SainadhAmul/EVA-5/blob/main/Capstone%20S15/Architecture%20diagrams/YOLO%20v3.jpeg)
-![YOLO](EVA-5/Capstone S15/Architecture diagrams/YOLO v3.jpeg)
+
 
 
 
@@ -81,7 +96,7 @@ Object localization network
 
 ```bash
 
-Root
+ Root
     ├── Arc Images 
     ├── MiDaS  ( FULL Repo) 
     ├── Yolov3  ( FULL Repo) 
@@ -93,8 +108,6 @@ Root
     ├── Final_Arc.py      
 
 Lables
-
-Construction PPE Kit
     ├── Annotated Images YOLO
     |   ├── images
     |   |   ├── image_0001.jpg
