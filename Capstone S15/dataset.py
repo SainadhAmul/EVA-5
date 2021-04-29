@@ -35,7 +35,7 @@ transforms_list = [
 transform_composed =  A.Compose(transforms_list)
 
 
- 
+
 class TSAIDataset(Dataset):
     def __init__(self, list_path, img_size, is_training,data_dir_path = None, is_debug=False):
         self.img_files = []
@@ -105,3 +105,24 @@ class TSAIDataset(Dataset):
 
     def __len__(self):
         return len(self.img_files)
+
+
+
+
+
+class tempToTensor(object):
+    def __init__(self, max_objects=50, is_debug=False):
+        self.max_objects = max_objects
+        self.is_debug = is_debug
+
+    def __call__(self, sample):
+        image, labels = sample['image'], sample['label']
+        if self.is_debug == False:
+            image = image.astype(np.float32)
+            image /= 255.0
+            image = np.transpose(image, (2, 0, 1))
+            image = image.astype(np.float32)
+
+        filled_labels = np.zeros((self.max_objects, 5), np.float32)
+        filled_labels[range(len(labels))[:self.max_objects]] = labels[:self.max_objects]
+        return {'image': torch.from_numpy(image), 'label': torch.from_numpy(filled_labels)}

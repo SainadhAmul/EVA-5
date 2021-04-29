@@ -60,12 +60,14 @@ class ModelMain(nn.Module):
         return m
 
     def forward(self, *x_outs):
+
         def _branch(_embedding, _in):
             for i, e in enumerate(_embedding):
                 _in = e(_in)
                 if i == 4:
                     out_branch = _in
             return _in, out_branch
+
         #  backbone
         # x2, x1, x0 = self.backbone(x)
 
@@ -77,7 +79,7 @@ class ModelMain(nn.Module):
         #  yolo branch 1
         x1_in = self.embedding1_cbl(out0_branch)
         x1_in = self.embedding1_upsample(x1_in)
-        
+
         # x1_in = torch.cat([x1_in, x1]], 1)
         x1_in = torch.cat([x1_in, x_outs[1]], 1)
         out1, out1_branch = _branch(self.embedding1, x1_in)
