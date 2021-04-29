@@ -8,56 +8,98 @@ from torch.optim.lr_scheduler import StepLR
 
 from model import Net
 
+from depth_loss import compute_depth_loss
+from yolo_loss import compute_loss
+
+# garbage collection
+import gc
+
+mixed_precision = True
+try:  # Mixed precision training https://github.com/NVIDIA/apex
+    from apex import amp
+except:
+    # print('Apex recommended for mixed precision and faster training: https://github.com/NVIDIA/apex')
+    mixed_precision = False  # not installed
+
+from team7_model import Team7Model
+
+# temp = TSAIDataset("/content/updated_final_data/data/customdata/train.txt",
+#                                                       (416, 416),
+#                                                       is_training=True,data_dir_path = "/content/updated_final_data/data/customdata/images/")
+
+
+# dataloader_temp = torch.utils.data.DataLoader(TSAIDataset("/content/updated_final_data/data/customdata/train.txt",
+#                                                       (416, 416),
+#                                                       is_training=True,data_dir_path = "/content/updated_final_data/data/customdata/images/"),
+#                                           batch_size=32,
+#                                           shuffle=True, num_workers=4, pin_memory=True)
 
 def train(model, train_loader, criterion, optimizer, device, l1_factor =0,  **trackers):
 
+    model = Team7Model(yolo_cfg=cfg,midas_cfg=None,planercnn_cfg=config,path=midas_args.weights).to(device)
+
+    # Optimizer
+    pg0, pg1, pg2 = [], [], []  # optimizer parameter groups
+    for k, v in dict(model.named_parameters()).items():
+        if '.bias' in k:
+            pg2 += [v]  # biases
+        elif 'Conv2d.weight' in k:
+            pg1 += [v]  # apply weight_decay
+        else:
+            pg0 += [v]  # all else
+
+    if opt.adam:
+        # hyp['lr0'] *= 0.1  # reduce lr (i.e. SGD=5E-3, Adam=5E-4)
+        optimizer = optim.Adam(pg0, lr=hyp['lr0'])
+        # optimizer = AdaBound(pg0, lr=hyp['lr0'], final_lr=0.1)
+    else:
+        optimizer = optim.SGD(pg0, lr=hyp['lr0'], momentum=hyp['momentum'], nesterov=True)
+
+
+
     model.train()
-    correct_classified = 0
-    for batch_number , (x_train,y_train) in enumerate(train_loader):
+
+    # for i,(plane_data,yolo_data,depth_data) in enumerate(train_loader):
+    for i,(yolo_data,depth_data) in enumerate(train_loader):
 
         batch_number+=1
 
-        x_train,y_train = x_train.to(device), y_train.to(device)
+        dp_img_size,depth_img,depth_target = depth_data
+        imgs, targets, paths, _ = yolo_data
 
-        # print(x_train.shape)
-        pred = model.forward(x_train)
+        plane_out,yolo_out,midas_out = model.forward(yolo_inp,midas_inp,plane_inp)
 
-        # print(pred.shape)
-        # print(y_train.shape)
-        loss = criterion(pred,y_train)
+        depth_loss = compute_depth_loss()
+        yolo_loss, yolo_loss_items = compute_loss(yolo_out, targets, model)
 
-        ## L1 LOSS
-        if l1_factor > 0:  # Apply L1 regularization
-            l1_criteria = nn.L1Loss(size_average=False)
-            regularizer_loss = 0
-            for parameter in model.parameters():
-                regularizer_loss += l1_criteria(parameter, torch.zeros_like(parameter))
-            loss += l1_factor * regularizer_loss
 
-        #pred.argmax(dim=1, keepdim=True)
-        #PyTorch .eq() function to do this, which compares the values in two tensors and if they match, returns a 1. If they don’t match, it returns a 0:
-        #correct += pred.eq(target.view_as(pred)).sum().item()
-        predicted = torch.max(pred.data ,1)[1]
-        correct_classified += (predicted == y_train).sum()
+        all_loss =  (add_yolo_loss * yolo_loss) + (add_midas_loss * depth_loss)  # (add_plane_loss * plane_loss) +
+        #all_loss = (add_yolo_loss * yolo_loss) + (add_midas_loss * ssim_out)
+        # print('plane_loss : ', plane_loss)
+        # print('yolo_loss : ', yolo_loss)
+        # print('ssim_out : ', depth_loss)
+        # print('all_loss :',all_loss)
+
+        #optimizer.zero_grad()
+
+        # Compute gradient
+        if mixed_precision:
+            with amp.scale_loss(all_loss, optimizer) as scaled_loss:
+                scaled_loss.backward()
+        else:
+            all_loss.backward()
+            pass
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
+        gc.collect()
         # train_loader.dataset.data / train_loader.batch_size
 
         if batch_number%100 == 0:
+            print('ALL LOSS : ', all_loss)
 
-            acc = round((correct_classified.item())/(batch_number*train_loader.batch_size),5)
-            print(f'(TRAIN) batch_number: {batch_number:4} Loss : {loss:4.4} Acc : {acc:4.5}')
-
-    acc = round((correct_classified.item())/len(train_loader.dataset.data),5)
-
-    prev_acc = trackers['train_acc']
-    trackers['train_acc'] = prev_acc.append(acc)
-
-    prev_losses = trackers['train_losses']
-    trackers['train_losses'] = prev_losses.append(loss.item())
 
 
 

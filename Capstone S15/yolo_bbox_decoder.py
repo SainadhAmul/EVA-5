@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 
 
-class ModelMain(nn.Module):
+class YoloDecoder(nn.Module):
 
     def __init__(self, is_training=True):
 

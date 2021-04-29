@@ -1,6 +1,12 @@
 
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
+from torch.autograd import Variable
+
+import numpy as np
 # for i,(plane_data,yolo_data,depth_data) in pbar:
 
 # dp_img_size,depth_img,depth_target = depth_data
@@ -8,8 +14,6 @@
 # plane_out,yolo_out,midas_out = model.forward(yolo_inp,midas_inp,plane_inp)
 
 def compute_depth_loss(midas_out, depth_target, dp_img_size):
-
-
 
         dp_prediction = midas_out
 
@@ -63,5 +67,6 @@ def compute_depth_loss(midas_out, depth_target, dp_img_size):
         loss_fn = nn.MSELoss()
         RMSE_loss = torch.sqrt(loss_fn(depth_pred, depth_target))
 
-
         depth_loss = (0.0001*RMSE_loss) + ssim_out
+
+        return depth_loss

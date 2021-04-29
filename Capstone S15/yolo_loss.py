@@ -23,6 +23,7 @@ from . import torch_utils  # , google_utils
 ## bboxdecoder /utils / utils.py
 
 def compute_loss(p, targets, model):  # predictions, targets, model
+
     ft = torch.cuda.FloatTensor if p[0].is_cuda else torch.Tensor
     lcls, lbox, lobj = ft([0]), ft([0]), ft([0])
     tcls, tbox, indices, anchor_vec = build_targets(p, targets, model)
