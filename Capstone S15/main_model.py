@@ -2,7 +2,7 @@
 import torch
 import torch.nn as nn
 
-from resnext_head import _make_resnet_encoder
+from resnext_head import _make_resnext_backbone
 
 from MiDaS.midas_decoder import MidasDecoder
 from MiDaS.midas_decoder import MaskRCNN
@@ -13,7 +13,7 @@ from bbox_decoder.utils import torch_utils
 
 
 
-class Team7Model(nn.Module):
+class OpNet(nn.Module):
 
 	'''
 		First Iteration: Network for detecting objects, generate depth map
@@ -21,7 +21,7 @@ class Team7Model(nn.Module):
 
 	def __init__(self,yolo_cfg,midas_cfg,planercnn_cfg,path=None):
 
-		super(Team7Model, self).__init__()
+		super(OpNet, self).__init__()
 
 		"""
 			Get required configuration for all the 3 models
@@ -37,7 +37,7 @@ class Team7Model(nn.Module):
 		print('use_pretrained',use_pretrained)
 		print('path',path)
 
-		self.encoder = _make_resnet_encoder(use_pretrained)
+		self.encoder = _make_resnext_backbone(use_pretrained)
 
 		# self.plane_decoder = MaskRCNN(self.planercnn_params,self.encoder) #options, config, modelType='final'
 

@@ -12,7 +12,7 @@ def _make_encoder(features, use_pretrained, groups=1, expand=False, exportable=T
 
 
 
-def _make_resnet_backbone(resnet):
+def _make_resnext_backbone(resnet):
     pretrained = nn.Module()
     pretrained.layer1 = nn.Sequential(
         resnet.conv1, resnet.bn1, resnet.relu, resnet.maxpool, resnet.layer1

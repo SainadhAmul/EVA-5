@@ -21,7 +21,7 @@ except:
     # print('Apex recommended for mixed precision and faster training: https://github.com/NVIDIA/apex')
     mixed_precision = False  # not installed
 
-from team7_model import Team7Model
+from main_model import OpNet
 
 # temp = TSAIDataset("/content/updated_final_data/data/customdata/train.txt",
 #                                                       (416, 416),
@@ -36,7 +36,7 @@ from team7_model import Team7Model
 
 def train(model, train_loader, criterion, optimizer, device, l1_factor =0,  **trackers):
 
-    model = Team7Model(yolo_cfg=cfg,midas_cfg=None,planercnn_cfg=config,path=midas_args.weights).to(device)
+    model = OpNet(yolo_cfg=cfg,midas_cfg=None,planercnn_cfg=config,path=midas_args.weights).to(device)
 
     # Optimizer
     pg0, pg1, pg2 = [], [], []  # optimizer parameter groups
@@ -56,20 +56,28 @@ def train(model, train_loader, criterion, optimizer, device, l1_factor =0,  **tr
         optimizer = optim.SGD(pg0, lr=hyp['lr0'], momentum=hyp['momentum'], nesterov=True)
 
 
-
     model.train()
 
     # for i,(plane_data,yolo_data,depth_data) in enumerate(train_loader):
-    for i,(yolo_data,depth_data) in enumerate(train_loader):
+    for i,sample in enumerate(train_loader):
 
         batch_number+=1
 
-        dp_img_size,depth_img,depth_target = depth_data
-        imgs, targets, paths, _ = yolo_data
+        # sample = {'image': img, 'label': labels}
+        # sample = totensor_object(sample)
+        # sample["image_path"] = img_path
+        # sample["origin_size"] = str([ori_w, ori_h])
+        # sample["depth"] = depth_data
+
+        dp_img_size,depth_img,depth_target = sample["origin_size"] , sample["image"] , sample["depth"]
+        imgs, targets, paths= sample["image"], samole['lables'], sample["image_path"]
+
+        # dp_img_size,depth_img,depth_target = depth_data
+        # imgs, targets, paths, _ = yolo_data
 
         plane_out,yolo_out,midas_out = model.forward(yolo_inp,midas_inp,plane_inp)
 
-        depth_loss = compute_depth_loss()
+        depth_loss = compute_depth_loss(midas_out, depth_target, dp_img_size)
         yolo_loss, yolo_loss_items = compute_loss(yolo_out, targets, model)
 
 
