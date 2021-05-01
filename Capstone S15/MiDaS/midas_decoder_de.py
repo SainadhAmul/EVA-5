@@ -16,7 +16,7 @@ class MidasDecoder(nn.Module):
     """
 
     def __init__(self, path=None, features=256,non_negative=True):
-        super(MidasNet_decoder, self).__init__()
+        super(MidasDecoder, self).__init__()
 
         """Init.
 

@@ -20,11 +20,51 @@ import albumentations as A
 from albumentations.pytorch import ToTensor
 
 
+
+import torch
+
+
+def get_device(force_cpu = True):
+
+    if force_cpu:
+        device = torch.device("cpu")
+
+    else:
+        use_cuda = torch.cuda.is_available()
+        device = torch.device("cuda" if use_cuda else "cpu")
+
+    return device
+
+class tempToTensor(object):
+    def __init__(self, max_objects=50, is_debug=False):
+        self.max_objects = max_objects
+        self.is_debug = is_debug
+
+    def __call__(self, sample):
+        image, labels = sample['image'], sample['label']
+        if self.is_debug == False:
+            image = image.astype(np.float32)
+            image /= 255.0
+            image = np.transpose(image, (2, 0, 1))
+            image = image.astype(np.float32)
+
+        filled_labels = np.zeros((self.max_objects, 5), np.float32)
+        filled_labels[range(len(labels))[:self.max_objects]] = labels[:self.max_objects]
+        return {'image': torch.from_numpy(image), 'label': torch.from_numpy(filled_labels)}
+
+
+totensor_object = tempToTensor()
+
 class TSAIDataset(Dataset):
+
+
     def __init__(self, list_path, img_size, is_training,data_dir_path = None, is_debug=False):
         self.img_files = []
         self.label_files = []
         self.depth_files = []
+
+
+
         for path in open(list_path, 'r'):
 #            if data_dir_path is not None:
 #                pass
@@ -55,7 +95,9 @@ class TSAIDataset(Dataset):
         # self.transforms.add(data_transforms.KeepAspect())
 #        self.transforms.add(data_transforms.ResizeImage(self.img_size))
 #        self.transforms.add(data_transforms.ToTensor(self.max_objects, self.is_debug))
+
     def __getitem__(self, index):
+
         img_path = self.img_files[index % len(self.img_files)].rstrip()
         img = cv2.imread(img_path, cv2.IMREAD_COLOR)
         if img is None:
@@ -89,24 +131,3 @@ class TSAIDataset(Dataset):
 
     def __len__(self):
         return len(self.img_files)
-
-
-
-
-
-class tempToTensor(object):
-    def __init__(self, max_objects=50, is_debug=False):
-        self.max_objects = max_objects
-        self.is_debug = is_debug
-
-    def __call__(self, sample):
-        image, labels = sample['image'], sample['label']
-        if self.is_debug == False:
-            image = image.astype(np.float32)
-            image /= 255.0
-            image = np.transpose(image, (2, 0, 1))
-            image = image.astype(np.float32)
-
-        filled_labels = np.zeros((self.max_objects, 5), np.float32)
-        filled_labels[range(len(labels))[:self.max_objects]] = labels[:self.max_objects]
-        return {'image': torch.from_numpy(image), 'label': torch.from_numpy(filled_labels)}

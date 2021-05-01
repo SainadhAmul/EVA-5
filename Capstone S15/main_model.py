@@ -2,11 +2,12 @@
 import torch
 import torch.nn as nn
 
-from resnext_head import _make_resnext_backbone
+from resnext_head import _resnext_backbone
 
 from MiDaS.midas_decoder_de import MidasDecoder
 
 from yolo_bbox_decoder.bbox_decoder import *
+from yolo_bbox_decoder.bbox_decoder import Darknet
 from yolo_bbox_decoder.utils import torch_utils
 
 
@@ -17,7 +18,7 @@ class OpNet(nn.Module):
 		First Iteration: Network for detecting objects, generate depth map
 	'''
 
-	def __init__(self,yolo_cfg,midas_cfg,planercnn_cfg,path=None):
+	def __init__(self, yolo_cfg, midas_cfg):
 
 		super(OpNet, self).__init__()
 
@@ -28,22 +29,22 @@ class OpNet(nn.Module):
 		self.yolo_params = yolo_cfg
 		self.midas_params = midas_cfg
 		# self.planercnn_params = planercnn_cfg
-		self.path = path
+		self.path = midas_cfg['weights']
 
-		use_pretrained = False if path is None else True
+		use_pretrained = False if self.path is None else True
 
 		print('use_pretrained',use_pretrained)
-		print('path',path)
+		print('path',self.path)
 
-		self.encoder = _make_resnext_backbone(use_pretrained)
+		self.encoder = _resnext_backbone(use_pretrained)
 
 		# self.plane_decoder = MaskRCNN(self.planercnn_params,self.encoder) #options, config, modelType='final'
 
         # DEPTH EST DECODER
-		self.depth_decoder = MidasDecoder(path)
+		self.depth_decoder = MidasDecoder(self.midas_params['weights'])
 
         ## BBX REGR DECODER
-		self.bbox_decoder =  YoloDecoder(self.yolo_params)
+		self.bbox_decoder =  Darknet(self.yolo_params)
 
 
 		self.conv1 = nn.Conv2d(in_channels=2048, out_channels=1024, kernel_size=(1, 1), padding=0, bias=False)
@@ -52,9 +53,9 @@ class OpNet(nn.Module):
 
 		self.info(False)
 
-	def forward(self,yolo_ip,midas_ip,plane_ip):
+	def forward(self, yolo_inp, midas_ip):
 
-		x = yolo_ip
+		x = yolo_inp
 		#x = midas_ip
 		#print('yolo_ip',yolo_ip.shape,yolo_ip[0][0][0][0])
 		#print('midas_ip',midas_ip.shape,midas_ip[0][0][0][0])
