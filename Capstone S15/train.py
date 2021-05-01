@@ -8,8 +8,8 @@ from torch.optim.lr_scheduler import StepLR
 
 from model import Net
 
-from depth_loss import compute_depth_loss
-from yolo_loss import compute_loss
+from MiDaS.depth_loss import compute_depth_loss
+from yolo_bbox_decoder.yolo_loss import compute_loss
 
 # garbage collection
 import gc

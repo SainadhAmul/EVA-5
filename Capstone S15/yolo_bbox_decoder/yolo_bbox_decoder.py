@@ -40,7 +40,7 @@ class YoloDecoder(nn.Module):
     def _make_cbl(self, _in, _out, ks):
         ''' cbl = conv + batch_norm + leaky_relu
         '''
-         pad= (ks - 1) // 2 if ks else 0
+        pad= (ks - 1) // 2 if ks else 0
         return nn.Sequential(OrderedDict([
             ("conv", nn.Conv2d(_in, _out, kernel_size=ks, stride=1, padding=pad, bias=False)),
             ("bn", nn.BatchNorm2d(_out)),
