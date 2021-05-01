@@ -20,22 +20,6 @@ import albumentations as A
 from albumentations.pytorch import ToTensor
 
 
-
-transforms_list = [
-    # normalize the data with mean and standard deviation to keep values in range [-1, 1]
-    # since there are 3 channels for each image,
-    # we have to specify mean and std for each channel
-
-    # convert the data to torch.FloatTensor
-    # with values within the range [0.0 ,1.0]
-    # A.Resize(416,416,1),
-    tempToTensor()
-]
-
-transform_composed =  A.Compose(transforms_list)
-
-
-
 class TSAIDataset(Dataset):
     def __init__(self, list_path, img_size, is_training,data_dir_path = None, is_debug=False):
         self.img_files = []
