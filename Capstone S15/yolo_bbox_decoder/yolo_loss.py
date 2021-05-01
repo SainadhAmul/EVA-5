@@ -16,7 +16,7 @@ import torch.nn as nn
 import torchvision
 from tqdm import tqdm
 
-from . import torch_utils  # , google_utils
+from .utils import torch_utils  # , google_utils
 
 # yolo_loss, yolo_loss_items = compute_loss(pred, targets, model)
 

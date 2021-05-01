@@ -4,12 +4,10 @@ import torch.nn as nn
 
 from resnext_head import _make_resnext_backbone
 
-from MiDaS.midas_decoder import MidasDecoder
-from MiDaS.midas_decoder import MaskRCNN
+from MiDaS.midas_decoder_de import MidasDecoder
 
-
-from yolo_bbox_decoder.yolo_bbox_decoder import *
-from yolo_bbox_decoder.bbox_decoder import torch_utils
+from yolo_bbox_decoder.bbox_decoder import *
+from yolo_bbox_decoder.utils import torch_utils
 
 
 
